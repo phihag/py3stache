@@ -22,14 +22,14 @@ class TestView(unittest.TestCase):
         self.assertEquals(DoubleSection().render(),"""* first\n* second\n* third""")
 
     def test_unicode_output(self):
-        self.assertEquals(UnicodeOutput().render(), u'<p>Name: Henri Poincaré</p>')
+        self.assertEquals(UnicodeOutput().render(), '<p>Name: Henri Poincaré</p>')
 
     def test_encoded_output(self):
         self.assertEquals(UnicodeOutput().render('utf8'), '<p>Name: Henri Poincar\xc3\xa9</p>')
 
     def test_unicode_input(self):
         self.assertEquals(UnicodeInput().render(),
-            u'<p>If alive today, Henri Poincaré would be 156 years old.</p>')
+            '<p>If alive today, Henri Poincaré would be 156 years old.</p>')
 
     def test_escaped(self):
         self.assertEquals(Escaped().render(), "<h1>Bear &gt; Shark</h1>")
