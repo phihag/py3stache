@@ -10,7 +10,7 @@ try:
     literal = markupsafe.Markup
 
 except ImportError:
-    escape = lambda x: cgi.escape(str(x))
+    escape = lambda x: cgi.escape(str(x), quote=True)
     literal = str
 
 
