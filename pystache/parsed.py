@@ -6,6 +6,7 @@ Exposes a class that represents a parsed (or compiled) template.
 This module is meant only for internal use.
 
 """
+import collections
 
 
 class ParsedTemplate(object):
@@ -42,11 +43,11 @@ class ParsedTemplate(object):
         """
         # We avoid use of the ternary operator for Python 2.4 support.
         def get_unicode(val):
-            if callable(val):
+            if isinstance(val, collections.Callable):
                 return val(context)
             return val
-        parts = map(get_unicode, self._parse_tree)
+        parts = list(map(get_unicode, self._parse_tree))
         s = ''.join(parts)
 
-        return unicode(s)
+        return str(s)
 

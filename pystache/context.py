@@ -13,6 +13,7 @@ spec, we define these categories mutually exclusively as follows:
      built-in type.
 
 """
+import collections
 
 # This equals '__builtin__' in Python 2 and 'builtins' in Python 3.
 _BUILTIN_MODULE = type(0).__module__
@@ -59,7 +60,7 @@ def _get_value(context, key):
             attr = getattr(context, key)
             # TODO: consider using EAFP here instead.
             #   http://docs.python.org/glossary.html#term-eafp
-            if callable(attr):
+            if isinstance(attr, collections.Callable):
                 return attr()
             return attr
 
@@ -175,7 +176,7 @@ class ContextStack(object):
 
     # TODO: add more unit tests for this.
     # TODO: update the docstring for dotted names.
-    def get(self, name, default=u''):
+    def get(self, name, default=''):
         """
         Resolve a dotted name against the current context stack.
 

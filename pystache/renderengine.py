@@ -8,6 +8,7 @@ Defines a class responsible for rendering logic.
 import re
 
 from pystache.parser import Parser
+import collections
 
 
 class RenderEngine(object):
@@ -72,7 +73,7 @@ class RenderEngine(object):
         """
         val = context.get(tag_name)
 
-        if callable(val):
+        if isinstance(val, collections.Callable):
             # According to the spec:
             #
             #     When used as the data value for an Interpolation tag,
@@ -81,14 +82,14 @@ class RenderEngine(object):
             #     rendered against the default delimiters, then
             #     interpolated in place of the lambda.
             template = val()
-            if not isinstance(template, basestring):
+            if not isinstance(template, str):
                 # In case the template is an integer, for example.
                 template = str(template)
-            if type(template) is not unicode:
+            if type(template) is not str:
                 template = self.literal(template)
             val = self._render(template, context)
 
-        if not isinstance(val, basestring):
+        if not isinstance(val, str):
             val = str(val)
 
         return val
@@ -141,7 +142,7 @@ class RenderEngine(object):
             data = context.get(name)
             # Per the spec, lambdas in inverted sections are considered truthy.
             if data:
-                return u''
+                return ''
             return parsed_template.render(context)
 
         return get_inverse
@@ -184,14 +185,14 @@ class RenderEngine(object):
                     # Then the value does not support iteration.
                     data = [data]
                 else:
-                    if isinstance(data, (basestring, dict)):
+                    if isinstance(data, (str, dict)):
                         # Do not treat strings and dicts (which are iterable) as lists.
                         data = [data]
                     # Otherwise, treat the value as a list.
 
             parts = []
             for element in data:
-                if callable(element):
+                if isinstance(element, collections.Callable):
                     # Lambdas special case section rendering and bypass pushing
                     # the data value onto the context stack.  From the spec--
                     #
@@ -216,7 +217,7 @@ class RenderEngine(object):
                 parts.append(parsed_template.render(context))
                 context.pop()
 
-            return unicode(''.join(parts))
+            return str(''.join(parts))
 
         return get_section
 
@@ -248,7 +249,7 @@ class RenderEngine(object):
         # called with template strings coming from potentially externally-
         # supplied functions like self.literal, self.load_partial, etc.
         # Beyond this point, we have much better control over the type.
-        if type(template) is not unicode:
+        if type(template) is not str:
             raise Exception("Argument 'template' not unicode: %s: %s" % (type(template), repr(template)))
 
         parsed_template = self._parse(template)
@@ -270,6 +271,6 @@ class RenderEngine(object):
         # Be strict but not too strict.  In other words, accept str instead
         # of unicode, but don't assume anything about the encoding (e.g.
         # don't use self.literal).
-        template = unicode(template)
+        template = str(template)
 
         return self._render(template, context)

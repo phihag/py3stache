@@ -21,10 +21,10 @@ from pystache.template_spec import TemplateSpec
 #   and byte strings, and 2to3 seems to convert all of "str", "unicode",
 #   and "basestring" to Python 3's "str".
 if sys.version_info < (3, ):
-    _STRING_TYPES = basestring
+    _STRING_TYPES = str
 else:
     # The latter evaluates to "bytes" in Python 3 -- even after conversion by 2to3.
-    _STRING_TYPES = (unicode, type(u"a".encode('utf-8')))
+    _STRING_TYPES = (str, type("a".encode('utf-8')))
 
 
 class Renderer(object):
@@ -123,7 +123,7 @@ class Renderer(object):
         if string_encoding is None:
             string_encoding = defaults.STRING_ENCODING
 
-        if isinstance(search_dirs, basestring):
+        if isinstance(search_dirs, str):
             search_dirs = [search_dirs]
 
         self._context = None
@@ -155,16 +155,16 @@ class Renderer(object):
         """
         # We type-check to avoid "TypeError: decoding Unicode is not supported".
         # We avoid the Python ternary operator for Python 2.4 support.
-        if isinstance(s, unicode):
+        if isinstance(s, str):
             return s
-        return self.unicode(s)
+        return self.str(s)
 
     def _to_unicode_hard(self, s):
         """
         Convert a basestring to a string with type unicode (not subclass).
 
         """
-        return unicode(self._to_unicode_soft(s))
+        return str(self._to_unicode_soft(s))
 
     def _escape_to_unicode(self, s):
         """
@@ -173,9 +173,9 @@ class Renderer(object):
         Returns a unicode string (not subclass).
 
         """
-        return unicode(self.escape(self._to_unicode_soft(s)))
+        return str(self.escape(self._to_unicode_soft(s)))
 
-    def unicode(self, b, encoding=None):
+    def str(self, b, encoding=None):
         """
         Convert a byte string to unicode, using string_encoding and decode_errors.
 
@@ -200,7 +200,7 @@ class Renderer(object):
 
         # TODO: Wrap UnicodeDecodeErrors with a message about setting
         # the string_encoding and decode_errors attributes.
-        return unicode(b, encoding, self.decode_errors)
+        return str(b, encoding, self.decode_errors)
 
     def _make_loader(self):
         """
@@ -208,7 +208,7 @@ class Renderer(object):
 
         """
         return Loader(file_encoding=self.file_encoding, extension=self.file_extension,
-                      to_unicode=self.unicode, search_dirs=self.search_dirs)
+                      to_unicode=self.str, search_dirs=self.search_dirs)
 
     def _make_load_template(self):
         """
@@ -283,7 +283,7 @@ class Renderer(object):
         engine = self._make_render_engine()
         rendered = engine.render(template, context)
 
-        return unicode(rendered)
+        return str(rendered)
 
     def _render_object(self, obj, *context, **kwargs):
         """

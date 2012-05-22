@@ -9,11 +9,11 @@ import os.path
 import sys
 import unittest
 
-import examples
-from examples.simple import Simple
-from examples.complex import Complex
-from examples.lambdas import Lambdas
-from examples.inverted import Inverted, InvertedLists
+from . import examples
+from .examples.simple import Simple
+from .examples.complex import Complex
+from .examples.lambdas import Lambdas
+from .examples.inverted import Inverted, InvertedLists
 from pystache import Renderer
 from pystache import TemplateSpec
 from pystache.common import TemplateNotFoundError
@@ -62,7 +62,7 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
         renderer2 = Renderer(search_dirs=EXAMPLES_DIR)
 
         actual = renderer1.render(spec)
-        self.assertString(actual, u"Partial: ")
+        self.assertString(actual, "Partial: ")
 
         actual = renderer2.render(spec)
         self.assertEqual(actual, "Partial: No tags...")
@@ -71,7 +71,7 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
         renderer = Renderer()
         actual = renderer.render(Simple())
 
-        self.assertString(actual, u"Hi pizza!")
+        self.assertString(actual, "Hi pizza!")
 
     def test_non_callable_attributes(self):
         view = Simple()
@@ -84,7 +84,7 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
     def test_complex(self):
         renderer = Renderer()
         actual = renderer.render(Complex())
-        self.assertString(actual, u"""\
+        self.assertString(actual, """\
 <h1>Colors</h1>
 <ul>
 <li><strong>red</strong></li>
@@ -103,7 +103,7 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
 
         renderer = Renderer()
         actual = renderer.render(view)
-        self.assertString(actual, u'nopqrstuvwxyz')
+        self.assertString(actual, 'nopqrstuvwxyz')
 
     def test_higher_order_lambda(self):
         view = Lambdas()
@@ -111,7 +111,7 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
 
         renderer = Renderer()
         actual = renderer.render(view)
-        self.assertString(actual, u'abcdefghijklmnopqrstuvwxyz')
+        self.assertString(actual, 'abcdefghijklmnopqrstuvwxyz')
 
     def test_partials_with_lambda(self):
         view = Lambdas()
@@ -119,7 +119,7 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
 
         renderer = Renderer(search_dirs=EXAMPLES_DIR)
         actual = renderer.render(view)
-        self.assertEqual(actual, u'nopqrstuvwxyz')
+        self.assertEqual(actual, 'nopqrstuvwxyz')
 
     def test_hierarchical_partials_with_lambdas(self):
         view = Lambdas()
@@ -127,12 +127,12 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
 
         renderer = Renderer(search_dirs=EXAMPLES_DIR)
         actual = renderer.render(view)
-        self.assertString(actual, u'nopqrstuvwxyznopqrstuvwxyz')
+        self.assertString(actual, 'nopqrstuvwxyznopqrstuvwxyz')
 
     def test_inverted(self):
         renderer = Renderer()
         actual = renderer.render(Inverted())
-        self.assertString(actual, u"""one, two, three, empty list""")
+        self.assertString(actual, """one, two, three, empty list""")
 
     def test_accessing_properties_on_parent_object_from_child_objects(self):
         parent = Thing()
@@ -144,12 +144,12 @@ class ViewTestCase(unittest.TestCase, AssertStringMixin):
         renderer = Renderer()
         actual = renderer.render(view, {'parent': parent})
 
-        self.assertString(actual, u'derp')
+        self.assertString(actual, 'derp')
 
     def test_inverted_lists(self):
         renderer = Renderer()
         actual = renderer.render(InvertedLists())
-        self.assertString(actual, u"""one, two, three, empty list""")
+        self.assertString(actual, """one, two, three, empty list""")
 
 
 def _make_specloader():
@@ -168,7 +168,7 @@ def _make_specloader():
         """
         if encoding is None:
             encoding = 'ascii'
-        return unicode(s, encoding, 'strict')
+        return str(s, encoding, 'strict')
 
     loader = Loader(file_encoding='ascii', to_unicode=to_unicode)
     return SpecLoader(loader=loader)
@@ -213,7 +213,7 @@ class SpecLoaderTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
         custom.template = "abc"
 
         spec_loader = self._make_specloader()
-        self._assert_template(spec_loader, custom, u"abc")
+        self._assert_template(spec_loader, custom, "abc")
 
     def test_load__template__type_unicode(self):
         """
@@ -221,10 +221,10 @@ class SpecLoaderTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
 
         """
         custom = TemplateSpec()
-        custom.template = u"abc"
+        custom.template = "abc"
 
         spec_loader = self._make_specloader()
-        self._assert_template(spec_loader, custom, u"abc")
+        self._assert_template(spec_loader, custom, "abc")
 
     def test_load__template__unicode_non_ascii(self):
         """
@@ -232,10 +232,10 @@ class SpecLoaderTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
 
         """
         custom = TemplateSpec()
-        custom.template = u"é"
+        custom.template = "é"
 
         spec_loader = self._make_specloader()
-        self._assert_template(spec_loader, custom, u"é")
+        self._assert_template(spec_loader, custom, "é")
 
     def test_load__template__with_template_encoding(self):
         """
@@ -243,14 +243,14 @@ class SpecLoaderTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
 
         """
         custom = TemplateSpec()
-        custom.template = u'é'.encode('utf-8')
+        custom.template = 'é'.encode('utf-8')
 
         spec_loader = self._make_specloader()
 
-        self.assertRaises(UnicodeDecodeError, self._assert_template, spec_loader, custom, u'é')
+        self.assertRaises(UnicodeDecodeError, self._assert_template, spec_loader, custom, 'é')
 
         custom.template_encoding = 'utf-8'
-        self._assert_template(spec_loader, custom, u'é')
+        self._assert_template(spec_loader, custom, 'é')
 
     # TODO: make this test complete.
     def test_load__template__correct_loader(self):
@@ -270,10 +270,10 @@ class SpecLoaderTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
                 self.encoding = None
 
             # Overrides the existing method.
-            def unicode(self, s, encoding=None):
+            def str(self, s, encoding=None):
                 self.s = s
                 self.encoding = encoding
-                return u"foo"
+                return "foo"
 
         loader = MockLoader()
         custom_loader = SpecLoader()
@@ -284,7 +284,7 @@ class SpecLoaderTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
         view.template_encoding = "encoding-foo"
 
         # Check that our unicode() above was called.
-        self._assert_template(custom_loader, view, u'foo')
+        self._assert_template(custom_loader, view, 'foo')
         self.assertEqual(loader.s, "template-foo")
         self.assertEqual(loader.encoding, "encoding-foo")
 
@@ -400,7 +400,7 @@ class TemplateSpecTests(unittest.TestCase):
         loader = self._make_loader()
         actual = loader.load(custom)
 
-        self.assertEqual(type(actual), unicode)
+        self.assertEqual(type(actual), str)
         self.assertEqual(actual, expected)
 
     def test_get_template(self):
@@ -410,7 +410,7 @@ class TemplateSpecTests(unittest.TestCase):
         """
         view = SampleView()
 
-        self._assert_get_template(view, u"ascii: abc")
+        self._assert_get_template(view, "ascii: abc")
 
     def test_get_template__template_encoding(self):
         """
@@ -422,4 +422,4 @@ class TemplateSpecTests(unittest.TestCase):
         self.assertRaises(UnicodeDecodeError, self._assert_get_template, view, 'foo')
 
         view.template_encoding = 'utf-8'
-        self._assert_get_template(view, u"non-ascii: é")
+        self._assert_get_template(view, "non-ascii: é")

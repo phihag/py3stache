@@ -44,7 +44,7 @@ def main(sys_argv):
         sys_argv.pop(1)
 
     # TODO: use logging module
-    print "pystache: running tests: expecting source: %s" % should_source_exist
+    print("pystache: running tests: expecting source: %s" % should_source_exist)
 
     try:
         # TODO: use optparse command options instead.

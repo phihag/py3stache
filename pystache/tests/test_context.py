@@ -320,7 +320,7 @@ class ContextStackTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
 
         """
         context = ContextStack()
-        self.assertString(context.get("foo"), u'')
+        self.assertString(context.get("foo"), '')
 
     def test_get__default(self):
         """
@@ -424,10 +424,10 @@ class ContextStackTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
     def test_dot_notation__missing_attr_or_key(self):
         name = "foo.bar.baz.bak"
         stack = ContextStack({"foo": {"bar": {}}})
-        self.assertString(stack.get(name), u'')
+        self.assertString(stack.get(name), '')
 
         stack = ContextStack({"foo": Attachable(bar=Attachable())})
-        self.assertString(stack.get(name), u'')
+        self.assertString(stack.get(name), '')
 
     def test_dot_notation__missing_part_terminates_search(self):
         """
@@ -451,7 +451,7 @@ class ContextStackTests(unittest.TestCase, AssertIsMixin, AssertStringMixin):
         """
         stack = ContextStack({'a': {'b': 'A.B'}}, {'a': 'A'})
         self.assertEqual(stack.get('a'), 'A')
-        self.assertString(stack.get('a.b'), u'')
+        self.assertString(stack.get('a.b'), '')
         stack.pop()
         self.assertEqual(stack.get('a.b'), 'A.B')
 
