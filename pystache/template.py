@@ -20,13 +20,6 @@ class Modifiers(dict):
     def set(self, key):
         """
         Decorator function to set the given key to the decorated function.
-
-            >>> modifiers = {}
-            >>> @modifiers.set('P')
-            ... def render_tongue(self, tag_name=None, context=None):
-            ...     return ":P %s" % tag_name
-            >>> modifiers
-            {'P': <function render_tongue at 0x...>}
         """
 
         def setter(func):
